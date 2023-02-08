@@ -6,7 +6,7 @@ sequenceDiagram
   
   browser ->>server: POST https://studies.cs.helsinki.fi/exampleapp/new_note
   activate server
-  server ->>browser: reirect  to "/exampleapp/notes"
+  server -->>browser: reirect  to "/exampleapp/notes"
   deactivate server
   
   Note right of server: The javascript code running on the server adds the note contained in the body of the browser request to the notes array, 
