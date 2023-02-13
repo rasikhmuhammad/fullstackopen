@@ -1,8 +1,14 @@
 import {useState} from 'react';
 
 const StatisticLine = ({stat, text, unit}) => {
-        return ( 
-            <p>{text} : {stat}{unit}</p>
+        return (
+            <tbody>
+                <tr>
+                    <td>{text}</td>    
+                    <td>{stat}</td>    
+                    <td>{unit}</td>    
+                </tr>
+            </tbody>
         );
 }
 
@@ -13,14 +19,14 @@ const Stats = ({reviews, total, avg, positive}) => {
     } 
     else {
         return (
-            <>
+            <table>
                 <StatisticLine stat = {reviews.good} text = "Good" />
                 <StatisticLine stat = {reviews.neutral} text = "neutral" />
                 <StatisticLine stat = {reviews.bad} text = "Bad" />
                 <StatisticLine stat = {total} text = "total" />
                 <StatisticLine stat = {avg} text = "Average" />
                 <StatisticLine stat = {positive} text = "Positive" unit = "%" />
-            </>
+            </table>
         )
     }
 }
