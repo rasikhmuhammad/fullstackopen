@@ -1,10 +1,31 @@
 import {useState} from 'react';
 
-const DisplayStats = ({stats, text, unit}) => {
-    return (    
-            <p>{text} : {stats}{unit}</p>
-    )
+const StatisticLine = ({stat, text, unit}) => {
+        return ( 
+            <p>{text} : {stat}{unit}</p>
+        );
 }
+
+const Stats = ({reviews, total, avg, positive}) => {
+
+    if(!total  > 0) {
+        return (<p>No feedback</p>);
+    } 
+    else {
+        return (
+            <>
+                <StatisticLine stat = {reviews.good} text = "Good" />
+                <StatisticLine stat = {reviews.neutral} text = "neutral" />
+                <StatisticLine stat = {reviews.bad} text = "Bad" />
+                <StatisticLine stat = {total} text = "total" />
+                <StatisticLine stat = {avg} text = "Average" />
+                <StatisticLine stat = {positive} text = "Positive" unit = "%" />
+            </>
+        )
+    }
+}
+
+
 
 const Button = ({text, onClick}) => {
     return (
@@ -42,18 +63,9 @@ const App  = ()  => {
                 <Button text = "neutral" onClick = {handleClick} />
                 <Button text = "bad" onClick = {handleClick} />
             </div>
-
             <br></br>
-
             <h1>Statistics</h1>
-            <DisplayStats stats = {reviews.good} text = "Good" />
-            <DisplayStats stats = {reviews.neutral} text = "neutral" />
-            <DisplayStats stats = {reviews.bad} text = "Bad" />
-            <DisplayStats stats = {total} text = "total" />
-            {total > 0 && <DisplayStats stats = {avg} text = "Average" />}
-            {total === 0 && <DisplayStats stats = {0} text = "Average" />}
-            {total > 0 && <DisplayStats stats = {positive} text = "Positive" unit = "%" />}
-            {total === 0 && <DisplayStats stats = {0} text = "Positive" unit = "%" />}
+            <Stats reviews = {reviews} total = {total} avg = {avg} positive = {positive} />
         </>
     )
 }
