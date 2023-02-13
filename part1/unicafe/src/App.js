@@ -1,12 +1,8 @@
 import {useState} from 'react';
 
-const DisplayReviews = ({reviews}) => {
+const DisplayStats = ({stats, text, unit}) => {
     return (    
-        <div>
-            <p>Good - {reviews.good}</p>
-            <p>Neutral - {reviews.neutral}</p>
-            <p>Bad - {reviews.bad}</p>
-        </div>
+            <p>{text} : {stats}{unit}</p>
     )
 }
 
@@ -24,6 +20,10 @@ const App  = ()  => {
         bad : 0
     });
 
+    const [total, setTotal] = useState(0);
+    const avg = (reviews.good - reviews.bad)/total;
+    const positive = (reviews.good/total)*100;
+
     const handleClick = (e) => {
         const text = e.target.textContent;
         const newReviews = {
@@ -31,7 +31,7 @@ const App  = ()  => {
         }
         newReviews[text]++;
         setReviews(newReviews);
-        console.log(reviews);
+        setTotal(total + 1);
     }
 
     return (
@@ -46,7 +46,14 @@ const App  = ()  => {
             <br></br>
 
             <h1>Statistics</h1>
-            <DisplayReviews reviews = {reviews} />
+            <DisplayStats stats = {reviews.good} text = "Good" />
+            <DisplayStats stats = {reviews.neutral} text = "neutral" />
+            <DisplayStats stats = {reviews.bad} text = "Bad" />
+            <DisplayStats stats = {total} text = "total" />
+            {total > 0 && <DisplayStats stats = {avg} text = "Average" />}
+            {total === 0 && <DisplayStats stats = {0} text = "Average" />}
+            {total > 0 && <DisplayStats stats = {positive} text = "Positive" unit = "%" />}
+            {total === 0 && <DisplayStats stats = {0} text = "Positive" unit = "%" />}
         </>
     )
 }
