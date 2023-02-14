@@ -13,11 +13,27 @@ const App = () => {
   ]
    
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(new Array(anecdotes.length).fill(0,0,anecdotes.length));
+  const [highest, setHighest] = useState(0);
+  const [voted, setVoted] = useState(0);
 
-  const zeroArray = Array.from(Array(anecdotes.length)).map( () => 0);
+  const findHighest = (voteArray) => {
+    let high = 0;
+    const original = [...voteArray];
+    const sorted = voteArray.sort( (a,b) => {
+      return a > b? -1: 1;
+    });
 
-  const [votes, setVote] = useState(zeroArray);
+    for (let i = 0; i < original.length; i++) {
+      if(original[i] === sorted[0]) {
+        high = i;
+        break;
+      }
+    }
 
+    return high;
+  }
+  
   const randomAnecdote = () => {
     const l = anecdotes.length;
     const newSelected = Math.floor(Math.random() * l);
@@ -25,21 +41,31 @@ const App = () => {
   }
 
   const handleVote = () => {
-    const newVotes = [...votes];
-    newVotes[selected] += 1;
-    setVote(newVotes);
+    const temp = [...votes];
+    const v = temp.map((vote, index) => {
+      return index === selected? vote + 1: vote;
+    });
+    setVotes(v);
+
+    const newHighest = findHighest([...v]);
+    setHighest(newHighest);
+    setVoted(voted + 1);
   }
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       {anecdotes[selected]}
       <p>has {votes[selected]} votes</p>
-      <br></br>
-      <br></br>
+
       <div>
         <button onClick = {handleVote}>Vote</button>
         <button onClick = {randomAnecdote}>next anecdote</button>
       </div>
+
+      <h1>Anecdotes with most votes</h1>
+      {voted >= 1 && <p>{anecdotes[highest]}</p>}
+      {voted < 1 && <p>No votes cast</p>}
     </div>
   )
 }
