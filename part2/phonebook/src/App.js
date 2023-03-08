@@ -3,6 +3,7 @@ import Contacts from "./components/Contacts";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import usePersons from "./services/persons"
+import Notification from './components/Notification';
 
 
 const App = () => {
@@ -11,9 +12,9 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [filterActive, setFilterActive] = useState(false)
   const [filterName, setFilterName] = useState('');
+  const [error, setError] = useState('')
 
   useEffect( () => {
-    
     usePersons.getAll()
     .then(initialPersons => setPersons(initialPersons))
   },[])
@@ -45,6 +46,17 @@ const App = () => {
         ))
         setNewName('');
         setNewNumber('');
+        setError(`Updated Number of ${updatedPerson.name} to ${updatedPerson.number}`)
+        setTimeout(() => {
+          setError('');
+        }, 3000)
+      })
+      .catch((error) => {
+        setError(`${newPerson.name} has already been deleted from the server`)
+        setTimeout(() => {
+          setError('');
+        }, 3000)
+        setPersons(persons.flter(person => person.id !== id))
       })
   }
 
@@ -104,6 +116,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message = {error} />
       <Filter filterName = {filterName} handleFilter = {handleFilter} />
 
       <br></br>
