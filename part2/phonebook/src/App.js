@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import axios from "axios"
 import Contacts from "./components/Contacts";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
+import usePersons from "./services/persons"
 
 
 const App = () => {
@@ -13,11 +13,9 @@ const App = () => {
   const [filterName, setFilterName] = useState('');
 
   useEffect( () => {
-    axios
-    .get('http://localhost:3001/persons')
-    .then((response) => {
-      setPersons(response.data)
-    })
+    
+    usePersons.getAll()
+    .then(initialPersons => setPersons(initialPersons))
   },[])
 
   const handleFilter = (e) => {
@@ -38,12 +36,24 @@ const App = () => {
     setNewNumber(e.target.value);
   }
 
+  const numberChange = (id) => {
+    const newPerson = {name: newName, number: newNumber}
+    usePersons.update(id, newPerson)
+      .then(updatedPerson => {
+        setPersons(persons.map(
+          person => person.id !== id ? person: updatedPerson
+        ))
+        setNewName('');
+        setNewNumber('');
+      })
+  }
 
   const handleSubmit =(event) => {
 
     event.preventDefault();
 
     let validEntry = true;
+    let numberChangeOnly = false;
 
     if(newName === "" || newNumber === "") {
       validEntry = false;
@@ -51,20 +61,45 @@ const App = () => {
     }
     
     for (const person of persons) {
-      if(newName === person.name) {
-        alert( `${newName} is already added to phonebook`)
-        validEntry = false;
+      if(newName.toLowerCase() === person.name.toLowerCase()) {
+        if (newNumber === person.number) {
+          alert( `${newName} is already added to phonebook`)
+          validEntry = false;
+        }
+        else {
+          if(window.confirm(`${person.name} is already added to phonebook, 
+          replace old number with a new one?`)) {
+            validEntry = true;
+            numberChangeOnly = true;
+            numberChange(person.id);
+          }
+        }
         break;
       }
     }
    
-    if(validEntry === true) {
+    if(validEntry === true && numberChangeOnly === false) {
       const newPerson = {name: newName, number: newNumber};
-      setPersons(persons.concat(newPerson));
-      setNewName('');
-      setNewNumber('');
+      usePersons.create(newPerson)
+        .then((addedPerson) => {
+          setPersons(persons.concat(addedPerson));
+          setNewName('');
+          setNewNumber('');
+        })
+    }
   }
-  } 
+
+  const handleDelete = (id, name) => {
+
+    if(window.confirm(`Delete ${name} ?`)) {
+      usePersons.remove(id)
+      .then(deletedNote => {
+        setPersons(persons.filter(
+          person => person.id !==id
+        ))
+      })
+    }
+  }
 
   return (
     <div>
@@ -86,9 +121,11 @@ const App = () => {
         persons = {persons} 
         filterActive = {filterActive} 
         filterName = {filterName}
+        handleDelete = {handleDelete}
       />
 
   </div>
+
 
   )
 }

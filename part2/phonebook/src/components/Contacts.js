@@ -1,16 +1,25 @@
-const Contact = ({person}) => {
+const Contact = ({person, handleDelete}) => {
     return (
-      <p>{person.name} - {person.number} </p>
+      <p>
+        {person.name} - {person.number} 
+        <button 
+          onClick = { () => handleDelete(person.id, person.name)}>Delete 
+        </button> 
+      </p>
     )
   }
   
-  const Contacts = ({persons, filterActive, filterName}) => {
+  const Contacts = ({persons, filterActive, filterName, handleDelete}) => {
   
     if(!filterActive) {
       return (
         <div>
           {persons.map( (person,index) => 
-            <Contact key = {person.name} person = {person} />
+            <Contact 
+              key = {person.id} 
+              person = {person}
+              handleDelete = {handleDelete} 
+            />
           )}
        </div>
       )
@@ -18,6 +27,7 @@ const Contact = ({person}) => {
     else {
         const filteredPersons = persons.filter( (person) => {
             return (
+              
                 person.name.toLowerCase()
                 .includes(filterName.toString().toLowerCase())
             )
@@ -25,7 +35,11 @@ const Contact = ({person}) => {
         return (
             <div>
             {filteredPersons.map( (person) => 
-            <Contact key = {person.name} person = {person} />
+              <Contact 
+                key = {person.id} 
+                person = {person}
+                handleDelete = {handleDelete}
+              />
             )}
       </div>
       )
