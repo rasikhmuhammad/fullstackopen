@@ -1,0 +1,13 @@
+.search-field {
+    margin: 0;
+    padding: 10px 5px;
+    font-weight: 600;
+    font-size: 1.06rem;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.search-field input {
+    margin: 10px 20px;
+    border: 2px solid lightgray;
+    min-height: 20px;
+}
